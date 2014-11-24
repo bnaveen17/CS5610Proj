@@ -9,15 +9,11 @@
     "openshift"
   ],
   "author": {
-    "name": "OpenShift",
-    "email": "ramr@example.org",
-    "url": "http://www.openshift.com/"
+    "name": "Naveen",
+    "email": "naveen17@ccs.neu.edu",
+    "url": "http://net4.ccs.neu.edu/home/naveen17/"
   },
-  "homepage": "http://www.openshift.com/",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/openshift/origin-server"
-  },
+  "homepage": "http://net4.ccs.neu.edu/home/naveen17/",
 
   "engines": {
     "node": ">= 0.6.0",
@@ -25,7 +21,11 @@
   },
 
   "dependencies": {
-    "express": "~3.4.4"
+    "express"    : "~4.7.2",
+    "mongoose"	 : "~3.6.2",
+	"morgan"     : "~1.2.2",
+    "body-parser": "~1.5.2",
+    "method-override": "~2.1.2"
   },
   "devDependencies": {},
   "bundleDependencies": [],
