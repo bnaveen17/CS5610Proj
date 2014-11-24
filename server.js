@@ -8,10 +8,10 @@ var methodOverride = require('method-override'); // simulate DELETE and PUT (exp
 var dbName = "stockMarketDB";
 var databaseUrl;
 if (process.env.OPENSHIFT_MONGODB_DB_HOST) {
-    databaseUrl = process.env.OPENSHIFT_MONGODB_DB_USERNAME + ":" + process.env.OPENSHIFT_MONGODB_DB_PASSWORD + "@" + process.env.OPENSHIFT_MONGODB_DB_HOST + ":" + process.env.OPENSHIFT_MONGODB_DB_PORT + "/" + dbName;
+    //databaseUrl = process.env.OPENSHIFT_MONGODB_DB_USERNAME + ":" + process.env.OPENSHIFT_MONGODB_DB_PASSWORD + "@" + process.env.OPENSHIFT_MONGODB_DB_HOST + ":" + process.env.OPENSHIFT_MONGODB_DB_PORT + "/" + dbName;
+    databaseUrl = process.env.OPENSHIFT_MONGODB_DB_URL + dbName;
 } else {
-    //databaseUrl = 'mongodb://localhost/' + dbName;
-    databaseUrl = process.env.OPENSHIFT_MONGODB_DB_URL;
+    databaseUrl = 'mongodb://localhost/' + dbName;
 }
 
 console.log(databaseUrl);
