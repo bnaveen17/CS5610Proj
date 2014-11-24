@@ -10,7 +10,8 @@ var databaseUrl;
 if (process.env.OPENSHIFT_MONGODB_DB_HOST) {
     databaseUrl = process.env.OPENSHIFT_MONGODB_DB_USERNAME + ":" + process.env.OPENSHIFT_MONGODB_DB_PASSWORD + "@" + process.env.OPENSHIFT_MONGODB_DB_HOST + ":" + process.env.OPENSHIFT_MONGODB_DB_PORT + "/" + dbName;
 } else {
-    databaseUrl = 'mongodb://localhost/' + dbName;
+    //databaseUrl = 'mongodb://localhost/' + dbName;
+    databaseUrl = process.env.OPENSHIFT_MONGODB_DB_URL;
 }
 
 console.log(databaseUrl);
