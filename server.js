@@ -1,114 +1,137 @@
 var express = require('express');
-var app = express();                               // create our app w/ express
-var mongoose = require('mongoose');                     // mongoose for mongodb
-var morgan = require('morgan');             // log requests to the console (express4)
-var bodyParser = require('body-parser');    // pull information from HTML POST (express4)
-var methodOverride = require('method-override'); // simulate DELETE and PUT (express4)
+var app = express();
+var mongoose = require('mongoose');
+var morgan = require('morgan');
+var bodyParser = require('body-parser');
+var methodOverride = require('method-override');
 
 var dbName = "cs5610proj";
 var databaseUrl;
 if (process.env.OPENSHIFT_MONGODB_DB_HOST) {
-    //databaseUrl = process.env.OPENSHIFT_MONGODB_DB_USERNAME + ":" + process.env.OPENSHIFT_MONGODB_DB_PASSWORD + "@" + process.env.OPENSHIFT_MONGODB_DB_HOST + ":" + process.env.OPENSHIFT_MONGODB_DB_PORT + "/" + dbName;
     databaseUrl = process.env.OPENSHIFT_MONGODB_DB_URL + dbName;
 } else {
     databaseUrl = 'mongodb://localhost/' + dbName;
 }
 
-console.log(databaseUrl);
-console.log(process.env.OPENSHIFT_MONGODB_DB_URL);
 mongoose.connect(databaseUrl);
 
 
 var ipaddress = process.env.OPENSHIFT_NODEJS_IP || "127.0.0.1";
-var port = process.env.OPENSHIFT_NODEJS_PORT || 3000;
+var port = process.env.OPENSHIFT_NODEJS_PORT || 4000;
 
 
-app.use(express.static(__dirname + '/public'));                 // set the static files location /public/img will be /img for users
+app.use(express.static(__dirname + '/public'));
 
-app.use(morgan('dev'));                                         // log every request to the console
-app.use(bodyParser.urlencoded({ 'extended': 'true' }));            // parse application/x-www-form-urlencoded
-app.use(bodyParser.json());                                     // parse application/json
-app.use(bodyParser.json({ type: 'application/vnd.api+json' })); // parse application/vnd.api+json as json
+app.use(morgan('dev'));                        
+app.use(bodyParser.urlencoded({ 'extended': 'true' }));            
+app.use(bodyParser.json());                                     
+app.use(bodyParser.json({ type: 'application/vnd.api+json' })); 
 app.use(methodOverride());
 
-var Todo = mongoose.model('Todo', {
-    text: String
+var appUser = mongoose.model('AppUsers', {
+    username: String,
+    password: String,
+    firstName: String,
+    lastName: String,
+    email: String
 });
-
-//app.get("/", function (req, res) {
-    //res.send("Hello World");
-//});
 
 // get all todos
-app.get('/api/todos', function (req, res) {
+app.get('/api/checkIfValidUser', function (req, res) {
 
-    // use mongoose to get all todos in the database
-    Todo.find(function (err, todos) {
-
-        // if there is an error retrieving, send the error. nothing after res.send(err) will execute
-        if (err)
-            res.send(err)
-
-        res.json(todos); // return all todos in JSON format
+    appUser.findOne({ username: req.query.username }, function (err, data) {
+        if (data) {
+            var retrievedPwd = data.password;
+            if (req.query.password == retrievedPwd) {
+                res.json({ isLoginError: false, loginErrorMessage: null });
+            } else {
+                res.json({ isLoginError: true, loginErrorMessage: 'Invalid password' });
+            }
+        } else {
+            res.json({ isLoginError: true, loginErrorMessage: 'This username is not registered' });
+        }
     });
 });
 
-// create todo and send back all todos after creation
-app.post('/api/todos', function (req, res) {
+app.get('/api/createUser', function (req, res) {
+    var isRegistrationError = false;
+    var registrationErrorMessage = null;
 
-    // create a todo, information comes from AJAX request from Angular
-    Todo.create({
-        text: req.body.text,
-        done: false
-    }, function (err, todo) {
-        if (err)
-            res.send(err);
+    appUser.findOne({ email: req.query.email }, function (err, data) {
+        if (data) {
+            isRegistrationError = true;
+            registrationErrorMessage = 'This email is already registered';
+        }
 
-        // get and return all the todos after you create another
-        Todo.find(function (err, todos) {
-            if (err)
-                res.send(err)
-            res.json(todos);
+        appUser.findOne({ username: req.query.username }, function (err, data) {
+
+            if (data) {
+                isRegistrationError = true;
+                registrationErrorMessage = 'This username is already registered';
+            }
+
+            if (isRegistrationError) {
+                res.json({ isRegistrationError: true, registrationErrorMessage: registrationErrorMessage });
+            } else {
+
+                var newUser = new appUser({
+                    username: req.query.username,
+                    password: req.query.password,
+                    email: req.query.email,
+                    firstName: req.query.firstname,
+                    lastName: req.query.lastname
+                });
+
+                newUser.save(function (err, data) {
+                    res.json({ isRegistrationError: false, registrationErrorMessage: null });
+                });
+            }
         });
     });
-
 });
 
-// delete a todo
-app.delete('/api/todos/:todo_id', function (req, res) {
-    Todo.remove({
-        _id: req.params.todo_id
-    }, function (err, todo) {
-        if (err)
-            res.send(err);
 
-        // get and return all the todos after you create another
-        Todo.find(function (err, todos) {
-            if (err)
-                res.send(err)
-            res.json(todos);
-        });
-    });
-});
+//app.get('/api/createUser', function (req, res) {
+//    var isRegistrationError = false;
+//    var registrationErrorMessage = null;
+//    var dbConnectivityError = 'Error connecting to database';
+//    appUser.findOne({ username: req.query.username }, function (err, data) {
+//        if (err) {
+//            console.log('Error4');
+//            res.json({ isRegistrationError: true, registrationErrorMessage: dbConnectivityError });
+//        }
+//        if (data) {
+//            console.log('Error3');
+//            res.json({ isRegistrationError: true, registrationErrorMessage: 'This username is already registered' });
+//        }
 
-//app.delete('*', function (req, res, next) {
-//    res.header("Access-Control-Allow-Origin", "*");
-//    res.header("Access-Control-Allow-Headers", "X-Requested-With");
-//    next();
-//});
+//        appUser.findOne({ email: req.query.email }, function (err, data) {
+//            if (err) {
+//                console.log('Error2');
+//                res.json({ isRegistrationError: true, registrationErrorMessage: dbConnectivityError });
+//            }
+//            if (data) {
+//                console.log('Error1');
+//                res.json({ isRegistrationError: true, registrationErrorMessage: 'This email is already registered' });
+//            }
 
-//app.post('*', function (req, res, next) {
-//    res.header("Access-Control-Allow-Origin", "*");
-//    res.header("Access-Control-Allow-Headers", "X-Requested-With");
-//    next();
-//});
+//            var newUser = new appUser({
+//                username: req.query.username,
+//                password: req.query.password,
+//                email: req.query.email,
+//                firstName: req.query.firstName,
+//                lastName: req.query.lastName
+//            });
 
-
-//app.get('*', function (req, res, next) {
-//    res.sendfile('/views/index.html'); // load the single view file (angular will handle the page changes on the front-end)
-//    res.header("Access-Control-Allow-Origin", "*");
-//    res.header("Access-Control-Allow-Headers", "X-Requested-With");
-//    next();
+//            newUser.save(function (err, data) {
+//                if (!err) {
+//                    res.json({ isRegistrationError: false, registrationErrorMessage: null });
+//                } else {
+//                    res.json({ isRegistrationError: true, registrationErrorMessage: 'Error creating user' });
+//                }
+//            });
+//        });
+//    });
 //});
 
 app.all('*', function (req, res, next) {
@@ -117,6 +140,5 @@ app.all('*', function (req, res, next) {
     next();
 });
 
-// listen (start app with node server.js) ======================================
 app.listen(port, ipaddress);
 console.log("App listening on port " + port);
