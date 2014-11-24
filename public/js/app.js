@@ -12,13 +12,13 @@ app
 
         $rootScope.$on("$routeChangeStart", function (event, next, current) {
             if ($cookieStore.get('loggedUser') == null) {
-                if (next.templateUrl == "views/login.html" || next.templateUrl == "views/home.html" || next.templateUrl == "views/register.html" || next.templateUrl == "views/forgotpassword.html") {
+                if (next.templateUrl == "views/login.html" || next.templateUrl == "views/home.html" || next.templateUrl == "views/register.html") {
                     
                 } else {
                     $location.path("/login");
                 }
             } else {
-                if (next.templateUrl == "views/login.html" || next.templateUrl == "views/register.html" || next.templateUrl == "views/forgotpassword.html") {
+                if (next.templateUrl == "views/login.html" || next.templateUrl == "views/register.html") {
                     $location.path("/");
                 }
             }
