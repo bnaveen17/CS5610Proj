@@ -90,26 +90,31 @@ app.delete('/api/todos/:todo_id', function (req, res) {
     });
 });
 
-app.delete('*', function (req, res, next) {
+//app.delete('*', function (req, res, next) {
+//    res.header("Access-Control-Allow-Origin", "*");
+//    res.header("Access-Control-Allow-Headers", "X-Requested-With");
+//    next();
+//});
+
+//app.post('*', function (req, res, next) {
+//    res.header("Access-Control-Allow-Origin", "*");
+//    res.header("Access-Control-Allow-Headers", "X-Requested-With");
+//    next();
+//});
+
+
+//app.get('*', function (req, res, next) {
+//    res.sendfile('/views/index.html'); // load the single view file (angular will handle the page changes on the front-end)
+//    res.header("Access-Control-Allow-Origin", "*");
+//    res.header("Access-Control-Allow-Headers", "X-Requested-With");
+//    next();
+//});
+
+app.all('*', function (req, res, next) {
     res.header("Access-Control-Allow-Origin", "*");
     res.header("Access-Control-Allow-Headers", "X-Requested-With");
     next();
 });
-
-app.post('*', function (req, res, next) {
-    res.header("Access-Control-Allow-Origin", "*");
-    res.header("Access-Control-Allow-Headers", "X-Requested-With");
-    next();
-});
-
-
-app.get('*', function (req, res, next) {
-    res.sendfile('/views/index.html'); // load the single view file (angular will handle the page changes on the front-end)
-    res.header("Access-Control-Allow-Origin", "*");
-    res.header("Access-Control-Allow-Headers", "X-Requested-With");
-    next();
-});
-
 
 // listen (start app with node server.js) ======================================
 app.listen(port, ipaddress);
