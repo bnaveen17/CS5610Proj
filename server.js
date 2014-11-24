@@ -103,7 +103,7 @@ app.post('*', function (req, res, next) {
 });
 
 
-app.get('*', function (req, res) {
+app.get('*', function (req, res, next) {
     res.sendfile('/views/index.html'); // load the single view file (angular will handle the page changes on the front-end)
     res.header("Access-Control-Allow-Origin", "*");
     res.header("Access-Control-Allow-Headers", "X-Requested-With");
