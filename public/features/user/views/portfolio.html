@@ -1,0 +1,63 @@
+﻿<div class="col-sm-offset-1 col-sm-11">
+    <div class="panel panel-primary top-buffer">
+        <div class="panel-heading">My Portfolio</div>
+        <div class="panel-body">
+            <div class="row clearfix">
+                <div class="row">
+                    <div class="pieChart col-sm-8" items="pieStocks"></div>
+                    <portfolio-overview class="col-sm-4"></portfolio-overview>
+                </div>
+                <button class="btn btn-success pull-right right-buffer" ng-click="openAddStockDialog()">Add Stock</button>
+
+                <table class="table table-bordered top-buffer">
+                    <thead>
+                        <tr>
+                            <th>Stock Name</th>
+                            <th>Avg Bought Price</th>
+                            <th>Total Quantity</th>
+                            <th>Last Price</th>
+                            <th>Change (in %) DTD</th>
+                            <th>Change DTD</th>
+                            <th>Overall Profit/Loss</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody ng-repeat="stock in portfolio">
+                        <tr>
+                            <td>{{stock.stockName}}</td>
+                            <td>{{stock.boughtPrice}}</td>
+                            <td>{{stock.quantity}}</td>
+                            <td>{{stock.lastPrice}}</td>
+                            <td>
+                                <font ng-show="stock.changePercent > 0" color="green">{{stock.changePercent}}</font>
+                                <font ng-hide="stock.changePercent > 0" color="red">{{stock.changePercent}}</font>
+                            </td>
+                            <td>
+                                <font ng-show="stock.totalDayChange > 0" color="green">{{stock.totalDayChange | customCurrency:"$"}}</font>
+                                <font ng-hide="stock.totalDayChange > 0" color="red">{{stock.totalDayChange | customCurrency:"$"}}</font>
+                            </td>
+                            <td>
+                                <font ng-show="stock.overallChange > 0" color="green">{{stock.overallChange | customCurrency:"$"}}</font>
+                                <font ng-hide="stock.overallChange > 0" color="red">{{stock.overallChange | customCurrency:"$"}}</font>
+                            </td>
+                            <td>
+                                <span class="btn-group">
+                                    <button class="btn btn-danger" ng-click="deleteStock(stock.stockTicker)">Delete</button>
+                                    <button class="btn btn-info" ng-click="viewHistory(stock)">View History</button>
+                                </span>
+                            </td>
+                        </tr>
+                </tbody>
+            </table>
+
+        </div>
+        </div>
+        <div class="panel-footer clearfix">
+            <div class="pull-right">
+                <button class="btn btn-warning" onclick="window.location='#/profile';"><i class="glyphicon glyphicon-pencil"></i>    My Profile</button>
+                <button class="btn btn-primary" onclick="window.location='#/watchlist';"><i class="glyphicon glyphicon-eye-open"></i>    My Watchlist</button>
+            </div>
+        </div>
+    </div>
+
+</div>

@@ -1,0 +1,44 @@
+﻿<div class="col-sm-offset-2 col-sm-8" ng-controller="ProfileCtrl" >
+    <div class="panel panel-primary top-buffer">
+        <div class="panel-heading">{{userInfo.firstName}}'s Profile</div>
+        <div class="panel-body">
+            <div class="col-sm-2" align="center"> <img alt="User Pic" src="img/unknownUser.png" class="img-circle"> </div>
+            <div class=" col-sm-6 col-sm-offset-1 ">
+                <table class="table">
+                    <tbody>
+                        <tr>
+                            <td>Username</td>
+                            <td class="text-muted">{{userInfo.username}}</td>
+                        <tr>
+                        <tr>
+                            <td class="col-sm-3">First name</td>
+                            <td>{{userInfo.firstName}}</td>
+                        </tr>
+                        <tr>
+                            <td>Last Name</td>
+                            <td>{{userInfo.lastName}}</td>
+                        </tr>
+
+                        <tr>
+                        <tr>
+                            <td>Email Address</td>
+                            <td>{{userInfo.email}}</td>
+                        </tr>
+                        <!--<tr ng-show="isEditProfile">-->
+                        <tr>
+                            <td>Edit profile image</td>
+                            <td><input ng-model='file' type="file" /></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        <div class="panel-footer clearfix">
+            <div class="pull-right">
+                <button class="btn btn-warning" onclick="window.location='#/portfolio';"><i class="glyphicon glyphicon-pencil"></i>    Edit my profile</button>
+                <button class="btn btn-primary" onclick="window.location='#/watchlist';"><i class="glyphicon glyphicon-eye-open"></i>    My Watchlist</button>
+                <button class="btn btn-success" onclick="window.location='#/portfolio';"><i class="glyphicon glyphicon-eye-open"></i>    My Portfolio</button>
+            </div>
+        </div>
+    </div>
+</div>
+</div>

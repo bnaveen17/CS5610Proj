@@ -1,0 +1,21 @@
+﻿.top-buffer { 
+    margin-top: 50px;
+}
+
+.right-buffer {
+    margin-right:50px;
+}
+
+.modal {
+display: block;
+height: 0;
+overflow: visible;
+}
+
+table .btn-group {
+    display: inline;
+}
+
+#editHistoryDialog {
+    width :75%;
+}

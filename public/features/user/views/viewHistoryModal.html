@@ -1,0 +1,48 @@
+﻿<div id="editHistoryDialog"
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4>View History for {{stock.stockName}}</h4>
+            </div>
+            <div class="modal-body">
+                <div ng-if="editErrorMessage" id="errorMessageDiv" class="col-sm-offset-4 col-sm-4" ng-class="editErrorClass">{{editErrorMessage}}</div>
+                <table class="table table-bordered table-hovered">
+                    <thead>
+                        <tr>
+                            <th>Quantity Bought</th>
+                            <th>Price Bought At</th>
+                            <th>Bought date</th>
+                            <th>Note</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody ng-repeat="entry in stock.stockHistory">
+                        <tr>
+                            <td>
+                                <span ng-hide="editMode">{{entry.quantity}}</span>
+                                <input type="text" ng-show="editMode" ng-model="entry.quantity" ng-required="true" />
+                            </td>
+                            <td>
+                                <span ng-hide="editMode">{{entry.boughtPrice}}</span>
+                                <input type="text" ng-show="editMode" ng-model="entry.boughtPrice" ng-required="true" />
+                            </td>
+                            <td>{{entry.boughtDate| date:'MM-dd-yyyy'}}</td>
+                            <td>
+                                <span ng-hide="editMode">{{entry.note}}</span>
+                                <input type="text" ng-show="editMode" ng-model="entry.note" />
+                            </td>
+                            <td>
+                                <button ng-hide="editMode" ng-click="editMode = true; editStock($index, entry);" class="btn btn-warning">Edit</button>
+                                <button type="submit" ng-show="editMode" ng-click="editMode = false; saveChanges();" class="btn btn-success">Save</button>
+                                <button ng-show="editMode" ng-click="editMode = false; cancelEdit();" class="btn btn-danger">Cancel</button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-danger" ng-click="cancel()">Cancel</button>
+            </div>
+        </div>
+    </div>
+</div>
