@@ -49,21 +49,30 @@ angular.module('stockMarketApp').controller("HomeCtrl", function ($scope, $cooki
     var finNews = []
 
     for (stockNum = 0; stockNum < techStocks.length; stockNum++) {
-        $http.get("http://www.google.com/finance/company_news?q=NASDAQ:" + techStocks[stockNum] + "&output=rss").success(function (response) {
+        $http.get("/api/getStockNews?exchange=NASDAQ&ticker=" + techStocks[stockNum] + "&output=rss").success(function (response) {
             var jsonData = x2js.xml_str2json(response);
-            
             newsItems = jsonData.rss.channel.item;
 
             for (i = 0; i < newsItems.length; i++) {
                 techNews.push($sce.trustAsHtml(newsItems[i].description));
             }
         });
+
+        //$http.get("http://www.google.com/finance/company_news?q=NASDAQ:" + techStocks[stockNum] + "&output=rss").success(function (response) {
+        //    var jsonData = x2js.xml_str2json(response);
+            
+        //    newsItems = jsonData.rss.channel.item;
+
+        //    for (i = 0; i < newsItems.length; i++) {
+        //        techNews.push($sce.trustAsHtml(newsItems[i].description));
+        //    }
+        //});
     }
 
     $scope.techNews = shuffle(techNews);
 
     for (stockNum = 0; stockNum < finStocks.length; stockNum++) {
-        $http.get("http://www.google.com/finance/company_news?q=NYSE:" + finStocks[stockNum] + "&output=rss").success(function (response) {
+        $http.get("/api/getStockNews?exchange=NYSE&ticker=" + finStocks[stockNum] + "&output=rss").success(function (response) {
             var jsonData = x2js.xml_str2json(response);
             newsItems = jsonData.rss.channel.item;
 
@@ -71,6 +80,14 @@ angular.module('stockMarketApp').controller("HomeCtrl", function ($scope, $cooki
                 finNews.push($sce.trustAsHtml(newsItems[i].description));
             }
         });
+        //$http.get("http://www.google.com/finance/company_news?q=NYSE:" + finStocks[stockNum] + "&output=rss").success(function (response) {
+        //    var jsonData = x2js.xml_str2json(response);
+        //    newsItems = jsonData.rss.channel.item;
+
+        //    for (i = 0; i < newsItems.length; i++) {
+        //        finNews.push($sce.trustAsHtml(newsItems[i].description));
+        //    }
+        //});
     }
 
     $scope.finNews = shuffle(finNews);    
@@ -157,7 +174,7 @@ angular.module('stockMarketApp').controller("FindStockCtrl", function ($scope, $
     //    getchart();
     //});
 
-    $http.get("/api/getStockNews?ticker=NASDAQ:" + symbol + "&output=rss").success(function (response) {
+    $http.get("/api/getStockNews?exchange=NASDAQ&ticker=" + symbol + "&output=rss").success(function (response) {
         var jsonData = x2js.xml_str2json(response);
         newsItems = jsonData.rss.channel.item;
         $scope.news = [];

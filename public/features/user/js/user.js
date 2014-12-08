@@ -39,7 +39,7 @@ var getUserPortfolio = function (username, $http, $scope) {
     });
 }
 
-angular.module('stockMarketApp').controller("PortfolioCtrl", function ($scope, $cookieStore, $http, $modal) {
+angular.module('stockMarketApp').controller("PortfolioCtrl", function ($scope, $cookieStore, $http, $modal, $route) {
     var username = $cookieStore.get('loggedUser');
     $scope.addStock = {};
     
@@ -68,7 +68,7 @@ angular.module('stockMarketApp').controller("PortfolioCtrl", function ($scope, $
         var deleteStockUrl = '/api/deleteStockFromPortfolio?' + 'username=' + username + '&stockTicker=' + stockTicker;
         $http({ method: 'DELETE', url: deleteStockUrl }).
           success(function (data, status, headers, config) {
-              getUserPortfolio(username);
+              $route.reload();
           }).error(function (data, status, headers, config) {
           });
     };
@@ -191,7 +191,7 @@ angular.module('stockMarketApp').controller('AddStockModalCtrl', function ($scop
     };
 });
 
-angular.module('stockMarketApp').controller('ViewHistoryModalCtrl', function ($scope, $modalInstance, $timeout, $cookieStore, $http, $location, stock) {
+angular.module('stockMarketApp').controller('ViewHistoryModalCtrl', function ($scope, $modalInstance, $timeout, $cookieStore, $http, $location, stock, $route) {
     var username = $cookieStore.get('loggedUser');
     $scope.stock = stock;
     $scope.changeBackup = {};
@@ -257,6 +257,7 @@ angular.module('stockMarketApp').controller('ViewHistoryModalCtrl', function ($s
     };
     $scope.cancel = function () {
         $modalInstance.dismiss('cancel');
+        $route.reload();
     };
 });
 

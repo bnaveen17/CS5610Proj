@@ -45,7 +45,7 @@
             </div>
             <center>
                 <div class="navbar-collapse collapse navbar-static-top" id="navbar-main" ng-controller="HeaderCtrl">
-                    <form class="navbar-form navbar-right" role="search" ng-hide="isUserLogged">
+                    <form class="navbar-form navbar-right" ng-hide="isUserLogged">
                         <div class="form-group">
                             <input type="text" class="form-control" ng-model="credentials.username" name="username" placeholder="Username" ng-required="true">
                         </div>
@@ -53,6 +53,7 @@
                             <input type="password" class="form-control" ng-model="credentials.password" name="password" placeholder="Password" ng-required="true">
                         </div>
                         <button type="submit" ng-click="login();" class="btn btn-success">Sign In</button>
+                        <a ng-href="#/register" class="btn btn-primary">Register</a>
                     </form>
                     <form class="navbar-form" role="search" ng-show="isUserLogged">
                         <ul class="nav navbar-nav navbar-right">

@@ -250,7 +250,7 @@ app.put('/api/editStockHistory', function (req, res) {
 
 app.get('/api/getStockNews', function (req, res) {
     
-    url = "http://www.google.com/finance/company_news?q=NASDAQ:" + req.query.ticker + "&output=rss"
+    url = "http://www.google.com/finance/company_news?q=" + req.query.exchange + ":" + req.query.ticker + "&output=rss";
 
 
     var options = {
