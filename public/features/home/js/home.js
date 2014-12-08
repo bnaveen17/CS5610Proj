@@ -51,6 +51,7 @@ angular.module('stockMarketApp').controller("HomeCtrl", function ($scope, $cooki
     for (stockNum = 0; stockNum < techStocks.length; stockNum++) {
         $http.get("http://www.google.com/finance/company_news?q=NASDAQ:" + techStocks[stockNum] + "&output=rss").success(function (response) {
             var jsonData = x2js.xml_str2json(response);
+            
             newsItems = jsonData.rss.channel.item;
 
             for (i = 0; i < newsItems.length; i++) {
@@ -141,11 +142,26 @@ angular.module('stockMarketApp').controller("FindStockCtrl", function ($scope, $
     $scope.isReverseSort = false;
     $scope.stockSymbol = symbol;
 
-    $http.get("http://www.google.com/finance/company_news?q=NASDAQ:" + symbol + "&output=rss").success(function (response) {
+    //$http.get("http://www.google.com/finance/company_news?q=nasdaq:" + symbol + "&output=rss").success(function (response) {
+    //    console.log('aaaaaaaaaaaaaaaaaa')
+    //    console.log(response);
+    //    var jsondata = x2js.xml_str2json(response);
+    //    console.log(jsondata);
+    //    newsitems = jsondata.rss.channel.item;
+    //    $scope.news = [];
+        
+    //    for (i = 0; i < newsitems.length; i++) {
+    //        $scope.news.push($sce.trustashtml(newsitems[i].description));
+    //    }
+    //    $scope.stocknewsfound = true;
+    //    getchart();
+    //});
+
+    $http.get("/api/getStockNews?ticker=NASDAQ:" + symbol + "&output=rss").success(function (response) {
         var jsonData = x2js.xml_str2json(response);
         newsItems = jsonData.rss.channel.item;
         $scope.news = [];
-        
+
         for (i = 0; i < newsItems.length; i++) {
             $scope.news.push($sce.trustAsHtml(newsItems[i].description));
         }

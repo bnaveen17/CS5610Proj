@@ -6,6 +6,7 @@ var bodyParser = require('body-parser');
 var methodOverride = require('method-override');
 var request = require('request');
 var async = require("async");
+var http = require("http");
 
 
 var dbName = "cs5610proj";
@@ -244,6 +245,37 @@ app.put('/api/editStockHistory', function (req, res) {
             res.json({ isEditHistoryError: false, editHistoryErrorMessage: null });
         }
     })
+});
+
+
+app.get('/api/getStockNews', function (req, res) {
+    
+    url = "http://www.google.com/finance/company_news?q=NASDAQ:" + req.query.ticker + "&output=rss"
+
+
+    var options = {
+        host: 'www.google.com',
+        port: 80,
+        path: '/finance/company_news?q=nasdaq:goog&output=rss'
+    };
+
+    res.writeHead(200, {
+        'Content-Type': 'text/xml'
+    });
+    var req = http.get(url, function (resp) {
+        console.log("Got response: " + resp.statusCode);
+
+        resp.on("data", function (chunk) {
+            res.write(chunk);
+        })
+
+        resp.on("end", function () {
+            res.end();
+        });
+    }).on('error', function (e) {
+        console.log("Got error: " + e.message);
+    });    
+
 });
 
 
