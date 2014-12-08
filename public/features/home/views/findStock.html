@@ -1,2 +1,17 @@
-﻿<div class="col-sm-offset-5"><h1>{{stockSymbol}} Stock News</h1></div>
-<div class="col-sm-offset-1 col-sm-6" id="chartContainer"></div>
+﻿<div>
+    <div class="row">
+        <div class="col-sm-offset-5"><h1>{{stockSymbol}} Stock Chart</h1></div>
+        <div class="col-sm-offset-3 col-sm-6" id="chartContainer"></div>
+    </div>
+    
+    <h1 class="col-sm-offset-5">{{stockSymbol}} Latest News</h1>
+    <div class="row" ng-show="news.length > 0">
+        <div class="col-md-4" ng-repeat="article in news | limitTo: 6">
+            <div class="thumbnail">
+                <div class="caption">
+                    <span style="color:green" ng-bind-html="article"></span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,3 +1,22 @@
 ﻿<div ng-controller="HomeCtrl">
-    <h1>{{homeMessage}}</h1>
+    <h1 class="col-sm-offset-5">Tech News</h1>
+    <div class="row"  ng-show="techNews.length > 0">
+        <div ng-repeat="article in techNews | limitTo: 9">
+            <div class="col-md-4 thumbnail">
+                <div class="caption">
+                    <span style="color:green" ng-bind-html="article"></span>
+                </div>
+            </div>
+        </div>
+    </div>
+    <h1 class="col-sm-offset-5">Financial News</h1>
+    <div class="row" ng-show="finNews.length > 0">
+        <div class="col-md-4" ng-repeat="article in finNews | limitTo: 9">
+            <div class="thumbnail">
+                <div class="caption">
+                    <span style="color:green" ng-bind-html="article"></span>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>

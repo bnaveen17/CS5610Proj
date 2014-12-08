@@ -78,9 +78,9 @@ angular.module('stockMarketApp').controller("PortfolioCtrl", function ($scope, $
     };
 });
 
-angular.module('stockMarketApp').controller('AddStockModalCtrl', function ($scope, $modalInstance, $timeout, $cookieStore, $http, $location) {
+angular.module('stockMarketApp').controller('AddStockModalCtrl', function ($scope, $modalInstance, $timeout, $cookieStore, $http, $location, $route) {
     var username = $cookieStore.get('loggedUser');
-
+    $scope.addStock = {};
     $scope.getStocksForAutoComplete = function (enteredStock) {
         return $.ajax({
             data: { input: enteredStock },
@@ -122,24 +122,72 @@ angular.module('stockMarketApp').controller('AddStockModalCtrl', function ($scop
         $modalInstance.dismiss('cancel');
     };
 
+    var resetAddStockModal = function () {
+        $scope.addStock.stockName = "";
+        $scope.addStock.quantity = "";
+        $scope.addStock.boughtPrice = "";
+        $scope.addStock.boughtDate = "";
+        $scope.addStock.note = "";
+    }
+
     $scope.addStockToPortfolio = function () {
-        var boughtDate = new Date($scope.addStock.boughtDate);
-        var boughtDateInMilliSeconds = boughtDate.getTime();
-        var stockNote = ' ';
-        if ($scope.addStock.note) {
-            stockNote = $scope.addStock.note;
+        if (!$scope.addStock || jQuery.isEmptyObject($scope.addStock)) {
+            $scope.addStock.addErrorMessage = "Form cannot be empty";
+            return;
         }
-        var addStockUrl = '/api/addStockToPortfolio' + '?username=' + username + '&stockName=' + $scope.addStock.stockName.Name + '&stockTicker=' + $scope.addStock.stockName.Symbol + '&quantity=' + $scope.addStock.quantity + '&boughtPrice=' + $scope.addStock.boughtPrice + '&note=' + stockNote + '&boughtDate=' + boughtDateInMilliSeconds;
-        addStockUrl = encodeURI(addStockUrl);
-        $http({ method: 'POST', url: addStockUrl }).
-            success(function (data, status, headers, config) {
-                if (!data.isStockAddError) {
-                    $modalInstance.close();
-                    $route.reload();
-                } else {
-                    $scope.addStock.addErrorMessage = data.stockAddErrorMessage;
-                }
-            });
+        if ($scope.addStock.stockName.Name && $scope.addStock.stockName.Symbol) {
+            console.log(1);
+            if (!$scope.addStock.quantity) {
+                $scope.addStock.addErrorMessage = "Quantity cannot be empty";
+                return;
+            }
+            console.log(2);
+            if (isNaN($scope.addStock.quantity)) {
+                $scope.addStock.addErrorMessage = "Quantity must be a number";
+                return;
+            } else {
+                $scope.addStock.quantity = (parseInt($scope.addStock.quantity)).toString();
+            }
+
+            console.log(3)
+            if (!$scope.addStock.boughtPrice) {
+                $scope.addStock.addErrorMessage = "Price cannot be empty";
+                return;
+            }
+
+            if (isNaN($scope.addStock.boughtPrice)) {
+                $scope.addStock.addErrorMessage = "Price must be a number";
+                return;
+            } else {
+                $scope.addStock.boughtPrice = (parseInt($scope.addStock.boughtPrice)).toString();
+            }
+
+            if (!$scope.addStock.boughtDate) {
+                $scope.addStock.addErrorMessage = "Bought date cannot be empty";
+                return;
+            }
+
+            var boughtDate = new Date($scope.addStock.boughtDate);
+            var boughtDateInMilliSeconds = boughtDate.getTime();
+            var stockNote = ' ';
+            if ($scope.addStock.note) {
+                stockNote = $scope.addStock.note;
+            }
+            var addStockUrl = '/api/addStockToPortfolio' + '?username=' + username + '&stockName=' + $scope.addStock.stockName.Name + '&stockTicker=' + $scope.addStock.stockName.Symbol + '&quantity=' + $scope.addStock.quantity + '&boughtPrice=' + $scope.addStock.boughtPrice + '&note=' + stockNote + '&boughtDate=' + boughtDateInMilliSeconds;
+            addStockUrl = encodeURI(addStockUrl);
+            $http({ method: 'POST', url: addStockUrl }).
+                success(function (data, status, headers, config) {
+                    if (!data.isStockAddError) {
+                        $modalInstance.close();
+                        $route.reload();
+                    } else {
+                        $scope.addStock.addErrorMessage = data.stockAddErrorMessage;
+                    }
+                });
+        } else {
+            $scope.addStock.addErrorMessage = "Invalid stock entered";
+            resetAddStockModal();
+        }
     };
 });
 
@@ -187,7 +235,6 @@ angular.module('stockMarketApp').controller('ViewHistoryModalCtrl', function ($s
             }
             var editUrl = '/api/editStockHistory?username=' + username + '&stockTicker=' + stock.stockTicker + '&quantity=' + editedQuantity + '&boughtPrice=' + editedBoughtPrice + '&note=' + editedNote + '&entryDate=' + $scope.changeBackup.entryDate;
             editUrl = encodeURI(editUrl);
-            console.log(editUrl);
             $http({ method: 'PUT', url: editUrl }).
             success(function (data, status, headers, config) {
                 if (!data.isEditHistoryError) {
@@ -212,33 +259,6 @@ angular.module('stockMarketApp').controller('ViewHistoryModalCtrl', function ($s
         $modalInstance.dismiss('cancel');
     };
 });
-
-function AppKeysCtrl($scope, $http, $location) {
-
-    $scope.changeBackup = {};
-    $scope.editing = false;
-
-
-    $scope.editAppKey = function (index) {
-        $scope.editing = $scope.appkeys.indexOf(index);
-        console.log($scope.editing);
-        $scope.changeBackup = angular.copy(index);
-    }
-
-    $scope.saveField = function (index) {
-        if ($scope.editing !== false) {
-            $scope.appkeys[$scope.editing] = $scope.changeBackup;
-            $scope.editing = false;
-        }
-    };
-
-    $scope.cancel = function (index) {
-        if ($scope.editing !== false) {
-            $scope.appkeys[$scope.editing] = $scope.changeBackup;
-            $scope.editing = false;
-        }
-    };
-}
 
 angular.module('stockMarketApp').directive('pieChart', function () {
     return {
@@ -308,6 +328,3 @@ angular.module('stockMarketApp').filter('customCurrency', ["$filter", function (
         return currency(amount, currencySymbol);
     };
 }]);
-
-
-

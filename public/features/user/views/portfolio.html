@@ -24,7 +24,7 @@
                     </thead>
                     <tbody ng-repeat="stock in portfolio">
                         <tr>
-                            <td>{{stock.stockName}}</td>
+                            <td><a ng-href="#/findStock/{{stock.stockTicker}}">{{stock.stockName}}</a></td>
                             <td>{{stock.boughtPrice}}</td>
                             <td>{{stock.quantity}}</td>
                             <td>{{stock.lastPrice}}</td>
@@ -41,10 +41,10 @@
                                 <font ng-hide="stock.overallChange > 0" color="red">{{stock.overallChange | customCurrency:"$"}}</font>
                             </td>
                             <td>
-                                <span class="btn-group">
-                                    <button class="btn btn-danger" ng-click="deleteStock(stock.stockTicker)">Delete</button>
-                                    <button class="btn btn-info" ng-click="viewHistory(stock)">View History</button>
-                                </span>
+                                <div class="btn-group">
+                                    <a class="btn btn-danger" ng-click="deleteStock(stock.stockTicker)">Delete</a>
+                                    <a class="btn btn-primary" ng-click="viewHistory(stock)">View History</a>
+                                </div>
                             </td>
                         </tr>
                 </tbody>

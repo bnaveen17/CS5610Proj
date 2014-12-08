@@ -19,13 +19,60 @@
     }
 });
 
-angular.module('stockMarketApp').controller("HomeCtrl", function ($scope, $cookieStore, $location, $rootScope) {
+function shuffle(array) {
+    var currentIndex = array.length, temporaryValue, randomIndex;
+
+    while (0 !== currentIndex) {
+
+        randomIndex = Math.floor(Math.random() * currentIndex);
+        currentIndex -= 1;
+
+        temporaryValue = array[currentIndex];
+        array[currentIndex] = array[randomIndex];
+        array[randomIndex] = temporaryValue;
+    }
+
+    return array;
+}
+
+angular.module('stockMarketApp').controller("HomeCtrl", function ($scope, $cookieStore, $location, $rootScope, $http, $sce) {
     $rootScope.isUserLogged = $cookieStore.get('isUserLogged');
     if ($cookieStore.get('loggedUser')) {
         $scope.homeMessage = "Welcome user : " + $cookieStore.get('loggedUser');
     } else {
         $scope.homeMessage = "Not logged in";
     }
+
+    var techStocks = ['GOOG', 'AMZN', 'MSFT', 'FB'];
+    var finStocks = ['BAC', 'WFC', 'GS', 'JPM'];
+    var techNews = []
+    var finNews = []
+
+    for (stockNum = 0; stockNum < techStocks.length; stockNum++) {
+        $http.get("http://www.google.com/finance/company_news?q=NASDAQ:" + techStocks[stockNum] + "&output=rss").success(function (response) {
+            var jsonData = x2js.xml_str2json(response);
+            newsItems = jsonData.rss.channel.item;
+
+            for (i = 0; i < newsItems.length; i++) {
+                techNews.push($sce.trustAsHtml(newsItems[i].description));
+            }
+        });
+    }
+
+    $scope.techNews = shuffle(techNews);
+
+    for (stockNum = 0; stockNum < finStocks.length; stockNum++) {
+        $http.get("http://www.google.com/finance/company_news?q=NYSE:" + finStocks[stockNum] + "&output=rss").success(function (response) {
+            var jsonData = x2js.xml_str2json(response);
+            newsItems = jsonData.rss.channel.item;
+
+            for (i = 0; i < newsItems.length; i++) {
+                finNews.push($sce.trustAsHtml(newsItems[i].description));
+            }
+        });
+    }
+
+    $scope.finNews = shuffle(finNews);    
 });
 
 angular.module('stockMarketApp').controller("RegisterCtrl", function ($scope, $location, $cookieStore, $http) {
@@ -86,9 +133,27 @@ angular.module('stockMarketApp').controller("HeaderCtrl", function ($scope, $loc
 
 
 
-angular.module('stockMarketApp').controller("FindStockCtrl", function ($scope, $location, $cookieStore, $http, $rootScope, $routeParams) {
+angular.module('stockMarketApp').controller("FindStockCtrl", function ($scope, $location, $cookieStore, $http, $rootScope, $routeParams, $sce) {
     var symbol = $routeParams.symbol;
+    $scope.stockFound = false;
+    $scope.stockNewsFound = false;
+    $scope.orderByColumn = 'name';
+    $scope.isReverseSort = false;
     $scope.stockSymbol = symbol;
+
+    $http.get("http://www.google.com/finance/company_news?q=NASDAQ:" + symbol + "&output=rss").success(function (response) {
+        var jsonData = x2js.xml_str2json(response);
+        newsItems = jsonData.rss.channel.item;
+        $scope.news = [];
+        
+        for (i = 0; i < newsItems.length; i++) {
+            $scope.news.push($sce.trustAsHtml(newsItems[i].description));
+        }
+        $scope.stockNewsFound = true;
+        getChart();
+    });
+    
+    
     getInputParams = function (symbol, duration) {
         return {
             Normalized: false,
@@ -179,6 +244,9 @@ angular.module('stockMarketApp').controller("FindStockCtrl", function ($scope, $
                     console.error("Error: ", json.Message);
                     return;
                 }
+                
+                $scope.stockFound = true;
+                
                 render(json, symbol);
             },
             error: function (response, txtStatus) {
@@ -186,6 +254,12 @@ angular.module('stockMarketApp').controller("FindStockCtrl", function ($scope, $
             }
         });
     };
-
-    getChart();
 })
+
+angular.module('stockMarketApp').directive('customThumbnail', function () {
+    return {
+        restrict: 'E',
+        scope: false,
+        templateUrl: 'features/home/views/customThumbnail.html'
+    }
+});

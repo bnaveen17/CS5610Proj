@@ -12,8 +12,9 @@ height: 0;
 overflow: visible;
 }
 
-table .btn-group {
-    display: inline;
+.btn-group {
+    display: flex;
+    padding: 10px 10px 10px 10px;
 }
 
 #editHistoryDialog {

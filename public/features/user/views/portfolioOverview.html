@@ -2,18 +2,21 @@
     <table class="table">
         <tr>
             <td>Today's Profit/Loss</td>
-            <td>{{todayProfit | customCurrency:"$"}}</td>
+            <td>
+                <font ng-show="todayProfit > 0" color="green">{{todayProfit | customCurrency:"$"}}</font>
+                <font ng-hide="todayProfit > 0" color="red">{{todayProfit | customCurrency:"$"}}</font>
+            </td>
         </tr>
         <tr>
             <td>Overall Profit/Loss</td>
-            <td>{{overallProfit | customCurrency:"$"}}</td>
+            <td>
+                <font ng-show="overallProfit > 0" color="green">{{overallProfit | customCurrency:"$"}}</font>
+                <font ng-hide="overallProfit > 0" color="red">{{overallProfit | customCurrency:"$"}}</font>
+            </td>
         </tr>
         <!--<tr>
             <td>Profit/Loss Realised till date</td>
             <td>{{realisedProfit | customCurrency:"$"}}</td>
         </tr>-->
     </table>
-    <div ng-if="errorMessage" id="errorMessageDiv" class="alert alert-error">{{errorMessage}}</div>
-
-    <div ng-if="successMessage" id="successMessageDiv" class="alert alert-success">{{successMessage}}</div>
 </div>
