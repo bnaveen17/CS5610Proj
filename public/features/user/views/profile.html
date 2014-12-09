@@ -24,18 +24,16 @@
                             <td>Email Address</td>
                             <td>{{userInfo.email}}</td>
                         </tr>
-                        <!--<tr ng-show="isEditProfile">-->
-                        <tr>
-                            <td>Edit profile image</td>
-                            <td><input ng-model='file' type="file" /></td>
-                        </tr>
                     </tbody>
                 </table>
+                <div ng-class="profileClass" role="alert" ng-show="showProfileMessage">
+                    <strong data-ng-bind="profileMessage"></strong>
+                </div>
             </div>
         <div class="panel-footer clearfix">
             <div class="pull-right">
-                <button class="btn btn-warning" onclick="window.location='#/portfolio';"><i class="glyphicon glyphicon-pencil"></i>    Edit my profile</button>
-                <button class="btn btn-primary" onclick="window.location='#/watchlist';"><i class="glyphicon glyphicon-eye-open"></i>    My Watchlist</button>
+                <!--<button class="btn btn-warning" onclick="window.location='#/portfolio';"><i class="glyphicon glyphicon-pencil"></i>    Edit my profile</button>-->
+                <button class="btn btn-primary" ng-click="openChangePasswordDialog()"><i class="glyphicon glyphicon-pencil"></i>    Change Password</button>
                 <button class="btn btn-success" onclick="window.location='#/portfolio';"><i class="glyphicon glyphicon-eye-open"></i>    My Portfolio</button>
             </div>
         </div>

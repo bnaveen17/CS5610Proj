@@ -1,4 +1,4 @@
-﻿angular.module('stockMarketApp').controller("ProfileCtrl", function ($scope, $location, $cookieStore, $http) {
+﻿angular.module('stockMarketApp').controller("ProfileCtrl", function ($scope, $location, $cookieStore, $http, $modal) {
     var username = $cookieStore.get('loggedUser')
     $http({ method: 'GET', url: '/api/getUserInfo?' + 'username=' + username }).
     success(function (data, status, headers, config) {
@@ -10,6 +10,13 @@
     });
     $scope.updateProfile = function () {
 
+    };
+
+    $scope.openChangePasswordDialog = function () {
+        var modalInstance = $modal.open({
+            templateUrl: 'features/user/views/changePasswordModal.html',
+            controller: 'ChangePasswordCtrl'
+        });
     };
 });
 
@@ -30,7 +37,7 @@ var getUserPortfolio = function (username, $http, $scope) {
                 if ($scope.portfolio[stockNum].quantity) {
                     quantity = $scope.portfolio[stockNum].quantity;
                 }
-                $scope.pieStocks.push([$scope.portfolio[stockNum].stockName, boughtPrice * quantity]);
+                $scope.pieStocks.push([$scope.portfolio[stockNum].stockName, $scope.portfolio[stockNum].lastPrice * quantity]);
                 $scope.todayProfit = $scope.todayProfit + parseInt($scope.portfolio[stockNum].totalDayChange);
                 $scope.overallProfit = $scope.overallProfit + parseInt($scope.portfolio[stockNum].overallChange);
             }
@@ -329,3 +336,44 @@ angular.module('stockMarketApp').filter('customCurrency', ["$filter", function (
         return currency(amount, currencySymbol);
     };
 }]);
+
+angular.module('stockMarketApp').controller('ChangePasswordCtrl', function ($scope, $modalInstance, $timeout, $cookieStore, $http, $location, $route) {
+    var username = $cookieStore.get('loggedUser');
+    $scope.changePassword = {};
+
+    $scope.cancel = function () {
+        $modalInstance.dismiss('cancel');
+    };
+
+    var resetChangePasswordModal = function () {
+        $scope.changePassword.oldPassword = "";
+        $scope.changePassword.newPassword = "";
+        $scope.changePassword.retypeNewPassword = "";
+    }
+
+    $scope.changePassword = function () {
+        console.log(!$scope.changePassword.oldPassword)
+        if (!$scope.changePassword.oldPassword || !$scope.changePassword.newPassword || !$scope.changePassword.retypeNewPassword) {
+            $scope.changePassword.errorMessage = "All fields are mandatory!!";
+            resetChangePasswordModal();
+            return;
+        }
+
+        if ($scope.changePassword.newPassword != $scope.changePassword.retypeNewPassword) {
+            $scope.changePassword.errorMessage = "New passwords do not match";
+            resetChangePasswordModal();
+            return;
+        }
+        url = "/api/changePassword?username=" + username + "&oldPassword=" + $scope.changePassword.oldPassword + "&newPassword=" + $scope.changePassword.newPassword
+        $http({ method: 'POST', url: url }).
+            success(function (data, status, headers, config) {
+                if (!data.errorMessage) {
+                    $modalInstance.close();
+                } else {
+                    $scope.changePassword.errorMessage = data.errorMessage;
+                    resetChangePasswordModal();
+                    return;
+                }
+            });
+    };
+});

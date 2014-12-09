@@ -56,6 +56,43 @@ app.get('/api/checkIfValidUser', function (req, res) {
     });
 });
 
+app.post('/api/changePassword', function (req, res) {
+    var errorMessage = null;
+
+    appUser.findOne({ username: req.query.username }, function (err, data) {
+        if (data.password != req.query.oldPassword) {
+            res.json({ errorMessage: 'Your old password does not match records!!' });
+        } else {
+            var change = { password: req.query.newPassword }
+            var query = { username: req.query.username };
+            appUser.findOneAndUpdate(query, change, function (err, data) {
+                if (err) {
+                    res.json({ errorMessage: "Unable to change password. Contact Admin!" });
+                } else {
+                    res.json({ errorMessage: null });
+                }
+            })
+        }
+    });
+});
+
+app.get('/api/updateProfile', function (req, res) {
+    var errorMessage = null;
+
+    appUser.findOne({ username: req.query.username }, function (err, data) {
+        var change = { firstName: req.query.firstname, lastName: req.query.lastname, email: req.query.email }
+        var query = { username: req.query.username };
+        appUser.findOneAndUpdate(query, change, function (err, data) {
+            if (err) {
+                res.json({ errorMessage: "Unable to update profile. Please contact Admin" });
+            } else {
+                res.json({ errorMessage: null });
+            }
+        })
+    });
+});
+
+
 app.post('/api/createUser', function (req, res) {
     var isRegistrationError = false;
     var registrationErrorMessage = null;

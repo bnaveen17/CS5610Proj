@@ -1,5 +1,9 @@
 ﻿<div ng-controller="HomeCtrl">
-    <h1 class="col-sm-offset-5">Tech News</h1>
+    <div class="row searchStock">
+        <input class="col-sm-offset-3 col-sm-4"  type="text" ng-model="stockToSearch" placeholder="Type stock to search" typeahead="stock as stock.Name for stock in getStocksForAutoComplete($viewValue) | limitTo:5" typeahead-min-length="3" class="form-control">
+        <button class="btn btn-primary" ng-click="gotoStockInfo()">Search Stock</button>
+    </div>
+    <h1 class="col-sm-offset-5" >Tech News</h1>
     <div class="row"  ng-show="techNews.length > 0">
         <div ng-repeat="article in techNews | limitTo: 9">
             <div class="col-md-4 thumbnail">

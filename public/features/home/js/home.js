@@ -36,6 +36,7 @@ function shuffle(array) {
 }
 
 angular.module('stockMarketApp').controller("HomeCtrl", function ($scope, $cookieStore, $location, $rootScope, $http, $sce) {
+
     $rootScope.isUserLogged = $cookieStore.get('isUserLogged');
     if ($cookieStore.get('loggedUser')) {
         $scope.homeMessage = "Welcome user : " + $cookieStore.get('loggedUser');
@@ -57,16 +58,6 @@ angular.module('stockMarketApp').controller("HomeCtrl", function ($scope, $cooki
                 techNews.push($sce.trustAsHtml(newsItems[i].description));
             }
         });
-
-        //$http.get("http://www.google.com/finance/company_news?q=NASDAQ:" + techStocks[stockNum] + "&output=rss").success(function (response) {
-        //    var jsonData = x2js.xml_str2json(response);
-            
-        //    newsItems = jsonData.rss.channel.item;
-
-        //    for (i = 0; i < newsItems.length; i++) {
-        //        techNews.push($sce.trustAsHtml(newsItems[i].description));
-        //    }
-        //});
     }
 
     $scope.techNews = shuffle(techNews);
@@ -80,17 +71,33 @@ angular.module('stockMarketApp').controller("HomeCtrl", function ($scope, $cooki
                 finNews.push($sce.trustAsHtml(newsItems[i].description));
             }
         });
-        //$http.get("http://www.google.com/finance/company_news?q=NYSE:" + finStocks[stockNum] + "&output=rss").success(function (response) {
-        //    var jsonData = x2js.xml_str2json(response);
-        //    newsItems = jsonData.rss.channel.item;
-
-        //    for (i = 0; i < newsItems.length; i++) {
-        //        finNews.push($sce.trustAsHtml(newsItems[i].description));
-        //    }
-        //});
     }
 
-    $scope.finNews = shuffle(finNews);    
+    $scope.finNews = shuffle(finNews);
+
+    $scope.getStocksForAutoComplete = function (enteredStock) {
+        return $.ajax({
+            data: { input: enteredStock },
+            type: "GET",
+            url: "http://dev.markitondemand.com/Api/v2/Lookup/jsonp",
+            dataType: "jsonp",
+            success: readData
+        });
+
+        function readData(data) {
+
+            var output = [];
+
+            data.forEach(function (stock) {
+                output.push(stock.Name);
+            });
+            return output;
+        }
+    };
+
+    $scope.gotoStockInfo = function() {
+        $location.path("/findStock/" + $scope.stockToSearch.Symbol);
+    }
 });
 
 angular.module('stockMarketApp').controller("RegisterCtrl", function ($scope, $location, $cookieStore, $http) {
